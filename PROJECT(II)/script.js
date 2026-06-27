@@ -106,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (signInBtn) {
         signInBtn.addEventListener('click', function() {
-            alert('Sign In functionality will be implemented soon!');
+            window.location.href = '../login.php';
         });
     }
     
     if (signUpBtn) {
         signUpBtn.addEventListener('click', function() {
-            alert('Sign Up functionality will be implemented soon!');
+            window.location.href = '../signup.php';
         });
     }
     
