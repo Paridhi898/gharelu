@@ -30,13 +30,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
     if (empty($propertyErrors)) {
         $stmt = mysqli_prepare(
             $conn,
-            'INSERT INTO house (landlord_id, title, description, house_type, address, city, price, bedrooms, bathrooms, amenities, availability_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)' 
+            'INSERT INTO house (landlord_id, title, description, house_type, address, city, price, bedrooms, bathrooms, availability_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)' 
         );
 
         if ($stmt) {
             $status = 'available';
-            mysqli_stmt_bind_param($stmt, 'isssssdiiis', $landlordId, $title, $description, $houseType, $address, $city, $price, $bedrooms, $bathrooms, $amenities, $status);
+            mysqli_stmt_bind_param($stmt, 'isssssdiiis', $landlordId, $title, $description, $houseType, $address, $city, $price, $bedrooms, $bathrooms, $status);
             if (mysqli_stmt_execute($stmt)) {
+                $houseId = mysqli_insert_id($conn);
+
+                if ($amenities !== '') {
+                    $amenityNames = array_filter(array_map('trim', preg_split('/,/', $amenities)));
+                    foreach ($amenityNames as $amenityName) {
+                        $amenityName = mysqli_real_escape_string($conn, $amenityName);
+                        $amenityCheck = mysqli_query($conn, "SELECT amenity_id FROM amenity WHERE amenity_name = '$amenityName' LIMIT 1");
+                        if ($amenityCheck && mysqli_num_rows($amenityCheck) > 0) {
+                            $amenityRow = mysqli_fetch_assoc($amenityCheck);
+                            $amenityId = intval($amenityRow['amenity_id']);
+                        } else {
+                            $amenityInsert = mysqli_query($conn, "INSERT INTO amenity (amenity_name) VALUES ('$amenityName')");
+                            if ($amenityInsert) {
+                                $amenityId = mysqli_insert_id($conn);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        mysqli_query($conn, "INSERT INTO house_amenity (house_id, amenity_id) VALUES ($houseId, $amenityId)");
+                    }
+                }
+
                 $propertySuccess = 'Property added successfully.';
                 header('Location: landlord_dashboard.php');
                 exit();
@@ -60,7 +83,7 @@ $listingStats = [
 
 $houseStmt = mysqli_prepare(
     $conn,
-    'SELECT house_id, title, house_type, address, city, price, bedrooms, bathrooms, availability_status, amenities, description, created_at FROM house WHERE landlord_id = ? ORDER BY created_at DESC'
+    'SELECT house_id, title, house_type, address, city, price, bedrooms, bathrooms, availability_status, description, created_at FROM house WHERE landlord_id = ? ORDER BY created_at DESC'
 );
 
 if ($houseStmt) {
