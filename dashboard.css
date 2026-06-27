@@ -181,3 +181,14 @@ nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4
 .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .fbtn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .18s; }
 .fbtn:hover, .fbtn.active { border-color: var(--accent); background: rgba(232,177,44,.1); color: var(--accent); }
+
+/* Admin verification table */
+.verification-body table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.verification-body th, .verification-body td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+.verification-body th { background: var(--card2); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.empty-state { color: var(--muted); padding: 10px 0; }
+.notice-message { background: rgba(56, 161, 105, 0.12); color: var(--green); border: 1px solid rgba(56, 161, 105, 0.2); padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; }
+.inline-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.approve-btn, .reject-btn { padding: 7px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; }
+.approve-btn { background: rgba(56, 161, 105, 0.12); color: var(--green); }
+.reject-btn { background: rgba(229, 62, 62, 0.12); color: var(--red); }

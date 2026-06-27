@@ -106,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (signInBtn) {
         signInBtn.addEventListener('click', function() {
-            window.location.href = '../login.php';
+            alert('Sign In functionality will be implemented soon!');
         });
     }
     
     if (signUpBtn) {
         signUpBtn.addEventListener('click', function() {
-            window.location.href = '../signup.php';
+            alert('Sign Up functionality will be implemented soon!');
         });
     }
     
@@ -164,6 +164,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             if (navLinks && navLinks.style.display === 'flex') {
                 // Keep mobile menu state if open
+            }
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('propertyModal');
+            if (modal) {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('view');
+                window.location.href = url.toString();
             }
         }
     });
