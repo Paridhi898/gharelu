@@ -1,0 +1,210 @@
+:root {
+    --primary-color: #2c5f8a;
+    --primary-dark: #1e3d59;
+    --secondary-color: #e8b12c;
+
+    --text-dark: #2d3748;
+    --text-light: #4a5568;
+
+    --bg: #f7fafc;
+    --white: #ffffff;
+    --border: #e2e8f0;
+
+    --red: #e53e3e;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.10);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.10);
+}
+
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:var(--bg);
+  padding:40px 0;
+}
+
+/* LOGIN CONTAINER */
+
+.login-container{
+  width:400px;
+  background:var(--white);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+
+/* REGISTER CONTAINER */
+
+.register-container{
+  width:480px;
+  background:var(--white);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+
+/* TOP SECTION */
+
+.top-section{
+  background:linear-gradient(135deg,var(--primary-color),var(--primary-dark));
+  color:var(--white);
+  text-align:center;
+  padding:40px 20px;
+}
+
+.top-section .icon{
+  font-size:50px;
+  margin-bottom:15px;
+}
+
+.top-section h1{
+  font-size:38px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.top-section p{
+  font-size:16px;
+  opacity:0.9;
+}
+
+/* FORM SECTION */
+
+.form-section{
+  padding:35px 30px 40px;
+}
+
+.form-group{
+  margin-bottom:25px;
+}
+
+.form-group label{
+  display:block;
+  font-size:14px;
+  font-weight:bold;
+  color:var(--text-dark);
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+
+/* INPUT + SELECT */
+
+.form-group input,
+.form-group select{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  outline:none;
+  font-size:16px;
+  transition:0.3s;
+  background:var(--white);
+}
+
+.form-group input:focus,
+.form-group select:focus{
+  border-color:var(--primary-color);
+  box-shadow:0 0 5px rgba(124,92,255,0.4);
+}
+
+/* LOGIN BUTTON */
+
+.login-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary-color),var(--primary-dark));
+  color:var(--white);
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s;
+}
+
+.login-btn:hover{
+  opacity:0.9;
+  transform:translateY(-2px);
+}
+
+/* REGISTER BUTTON */
+
+.register-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary-color),var(--primary-dark));
+  color:var(--white);
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s;
+}
+
+.register-btn:hover{
+  opacity:0.9;
+  transform:translateY(-2px);
+}
+
+/* LOGIN PAGE REGISTER TEXT */
+
+.register-text{
+  text-align:center;
+  margin-top:20px;
+  color:var(--text-light);
+  font-size:15px;
+}
+
+.register-text a{
+  color:var(--primary-color);
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.register-text a:hover{
+  text-decoration:underline;
+}
+
+/* REGISTER PAGE LOGIN TEXT */
+
+.login-text{
+  text-align:center;
+  margin-top:20px;
+  color:var(--text-light);
+  font-size:15px;
+}
+
+.login-text a{
+  color:var(--primary-color);
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.login-text a:hover{
+  text-decoration:underline;
+}
+.error-message{
+  background:rgba(229,62,62,.08);
+  color:var(--red);
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(229,62,62,.25);
+  margin-bottom:20px;
+  text-align:center;
+  font-weight:bold;
+}
+

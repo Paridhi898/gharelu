@@ -1,75 +1,30 @@
 <?php
-session_start();
+require_once __DIR__ . '/config.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+require_role('admin');
+
+$conn = db_connect();
+
+if (isset($_GET['approve']) || isset($_GET['reject'])) {
+    $id = intval($_GET['approve'] ?? $_GET['reject']);
+    $status = isset($_GET['approve']) ? 'verified' : 'rejected';
+
+    $stmt = mysqli_prepare($conn, 'UPDATE landlord SET verification_status = ? WHERE user_id = ?');
+    mysqli_stmt_bind_param($stmt, 'si', $status, $id);
+    mysqli_stmt_execute($stmt);
+
+    header('Location: admin_dashboard.php');
     exit();
 }
 
-if ($_SESSION['user_type'] != "admin") {
-    header("Location: login.php");
-    exit();
-}
+$totalUsers = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users"))[0];
+$totalLandlords = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users WHERE user_type='landlord'"))[0];
+$totalTenants = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users WHERE user_type='tenant'"))[0];
 
-$conn = mysqli_connect("localhost", "root", "", "gharelu_db");
-
-if (!$conn) {
-    die("Connection Failed");
-}
-
-/* Approve Landlord */
-if (isset($_GET['approve'])) {
-
-    $id = intval($_GET['approve']);
-
-    mysqli_query($conn, "
-        UPDATE users
-        SET verification_status='verified',
-            verified_at=NOW()
-        WHERE id='$id'
-    ");
-
-    header("Location: admin_dashboard.php");
-    exit();
-}
-
-/* Reject Landlord */
-if (isset($_GET['reject'])) {
-
-    $id = intval($_GET['reject']);
-
-    mysqli_query($conn, "
-        UPDATE users
-        SET verification_status='rejected'
-        WHERE id='$id'
-    ");
-
-    header("Location: admin_dashboard.php");
-    exit();
-}
-
-/* Dashboard Counts */
-
-$totalUsers = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users"));
-
-$totalLandlords = mysqli_num_rows(mysqli_query($conn, "
-SELECT * FROM users
-WHERE user_type='landlord'
-"));
-
-$totalTenants = mysqli_num_rows(mysqli_query($conn, "
-SELECT * FROM users
-WHERE user_type='tenant'
-"));
-
-$pending = mysqli_query($conn, "
-SELECT *
-FROM users
-WHERE user_type='landlord'
-AND verification_status='pending'
-");
-
+$pending = mysqli_query($conn, "SELECT u.id, u.username, u.full_name, u.email, u.phone_number, u.citizenship_id, l.verification_status FROM users u JOIN landlord l ON l.user_id = u.id WHERE u.user_type='landlord' AND l.verification_status != 'verified'");
 $pendingCount = mysqli_num_rows($pending);
+
+mysqli_close($conn);
 
 ?>
 
@@ -185,12 +140,11 @@ $pendingCount = mysqli_num_rows($pending);
                         <tr>
 
                             <th>Name</th>
-
+                            <th>Username</th>
                             <th>Email</th>
-
                             <th>Phone</th>
-
                             <th>Citizenship ID</th>
+                            <th>Status</th>
                             <th class="action-col">Action</th>
 
                         </tr>
@@ -206,33 +160,32 @@ $pendingCount = mysqli_num_rows($pending);
     <td>
         <?php echo htmlspecialchars($row['full_name']); ?>
     </td>
-
+    <td>
+        <?php echo htmlspecialchars($row['username']); ?>
+    </td>
     <td>
         <?php echo htmlspecialchars($row['email']); ?>
     </td>
-
     <td>
         <?php echo htmlspecialchars($row['phone_number']); ?>
     </td>
-
     <td>
         <?php echo htmlspecialchars($row['citizenship_id']); ?>
     </td>
-
+    <td>
+        <?php echo ucfirst(htmlspecialchars($row['verification_status'])); ?>
+    </td>
     <td class="action-col">
-
         <a href="admin_dashboard.php?approve=<?php echo $row['id']; ?>">
             <button type="button" class="approve-btn">
                 Approve
             </button>
         </a>
-
         <a href="admin_dashboard.php?reject=<?php echo $row['id']; ?>">
             <button type="button" class="reject-btn">
                 Reject
             </button>
         </a>
-
     </td>
 
 </tr>

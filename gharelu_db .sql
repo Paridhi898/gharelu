@@ -71,6 +71,90 @@ ALTER TABLE `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+CREATE TABLE IF NOT EXISTS `house` (
+  `house_id` int(11) NOT NULL AUTO_INCREMENT,
+  `landlord_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `house_type` varchar(50) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `city` varchar(100) NOT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `bedrooms` int(11) NOT NULL DEFAULT 0,
+  `bathrooms` int(11) NOT NULL DEFAULT 0,
+  `amenities` text,
+  `availability_status` enum('available','pending','rented') NOT NULL DEFAULT 'available',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`house_id`),
+  KEY `idx_landlord_id` (`landlord_id`),
+  CONSTRAINT `fk_house_landlord` FOREIGN KEY (`landlord_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `house_image` (
+  `image_id` int(11) NOT NULL AUTO_INCREMENT,
+  `house_id` int(11) NOT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`image_id`),
+  KEY `idx_house_id` (`house_id`),
+  CONSTRAINT `fk_house_image_house` FOREIGN KEY (`house_id`) REFERENCES `house` (`house_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `amenity` (
+  `amenity_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`amenity_id`),
+  UNIQUE KEY `uniq_amenity_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `house_amenity` (
+  `house_id` int(11) NOT NULL,
+  `amenity_id` int(11) NOT NULL,
+  PRIMARY KEY (`house_id`,`amenity_id`),
+  KEY `idx_house_amenity_amenity` (`amenity_id`),
+  CONSTRAINT `fk_house_amenity_house` FOREIGN KEY (`house_id`) REFERENCES `house` (`house_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_house_amenity_amenity` FOREIGN KEY (`amenity_id`) REFERENCES `amenity` (`amenity_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `interest_request` (
+  `request_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tenant_id` int(11) NOT NULL,
+  `house_id` int(11) NOT NULL,
+  `message` text,
+  `request_status` enum('pending','accepted','rejected') NOT NULL DEFAULT 'pending',
+  `requested_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`request_id`),
+  KEY `idx_tenant_id` (`tenant_id`),
+  KEY `idx_house_id` (`house_id`),
+  CONSTRAINT `fk_interest_request_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_interest_request_house` FOREIGN KEY (`house_id`) REFERENCES `house` (`house_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `favorite` (
+  `favorite_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tenant_id` int(11) NOT NULL,
+  `house_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`favorite_id`),
+  KEY `idx_favorite_tenant` (`tenant_id`),
+  KEY `idx_favorite_house` (`house_id`),
+  CONSTRAINT `fk_favorite_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_favorite_house` FOREIGN KEY (`house_id`) REFERENCES `house` (`house_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `notification` (
+  `notification_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`notification_id`),
+  KEY `idx_notification_user` (`user_id`),
+  CONSTRAINT `fk_notification_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
