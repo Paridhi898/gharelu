@@ -4,13 +4,13 @@ session_start();
 
 $conn = mysqli_connect("localhost", "root", "", "gharelu_db");
 
-if(!$conn){
+if (!$conn) {
     die("Connection Failed");
 }
 
 $error = "";
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -19,13 +19,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     $result = mysqli_query($conn, $sql);
 
-    if(mysqli_num_rows($result) > 0){
+    if (mysqli_num_rows($result) > 0) {
 
         $user = mysqli_fetch_assoc($result);
 
         // VERIFY PASSWORD
 
-        if(password_verify($password, $user['password'])){
+        if (password_verify($password, $user['password'])) {
 
             // STORE SESSION
 
@@ -37,32 +37,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             // REDIRECT BASED ON ROLE
 
-            if($user['user_type'] == "admin"){
+            if ($user['user_type'] == "admin") {
 
                 header("Location: admin_dashboard.php");
-
-            }elseif($user['user_type'] == "landlord"){
+            } elseif ($user['user_type'] == "landlord") {
 
                 header("Location: owner_dashboard.php");
-
-            }elseif($user['user_type'] == "tenant"){
+            } elseif ($user['user_type'] == "tenant") {
 
                 header("Location: tenant_dashboard.php");
-
             }
 
             exit();
-
-        }else{
+        } else {
 
             $error = "Incorrect Password";
         }
-
-    }else{
+    } else {
 
         $error = "User Not Found";
     }
-
 }
 
 ?>
@@ -78,70 +72,71 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     <title>Login</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<div class="login-container">
+    <div class="login-container">
 
-    <div class="top-section">
+        <div class="top-section">
 
-        <div class="icon">🏠</div>
+            <div class="icon">🏠</div>
 
-        <h1>Welcome Back</h1>
+            <h1>Welcome Back</h1>
 
-        <p>Login to your Gharelu account</p>
+            <p>Login to your Gharelu account</p>
 
-    </div>
+        </div>
 
-    <div class="form-section">
+        <div class="form-section">
 
-        <?php
+            <?php
 
-        if($error != ""){
+            if ($error != "") {
 
-            echo "<div class='error-message'>$error</div>";
-        }
+                echo "<div class='error-message'>$error</div>";
+            }
 
-        ?>
+            ?>
 
-        <form method="POST">
+            <form method="POST">
 
-            <div class="form-group">
+                <div class="form-group">
 
-                <label>Username</label>
+                    <label>Username</label>
 
-                <input type="text" name="username" required>
+                    <input type="text" name="username" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <input type="password" name="password" required>
+
+                </div>
+
+                <button type="submit" class="login-btn">
+                    LOGIN
+                </button>
+
+            </form>
+
+            <div class="register-text">
+
+                Don't have an account?
+
+                <a href="signup.php">Register here</a>
 
             </div>
-
-            <div class="form-group">
-
-                <label>Password</label>
-
-                <input type="password" name="password" required>
-
-            </div>
-
-            <button type="submit" class="login-btn">
-                LOGIN
-            </button>
-
-        </form>
-
-        <div class="register-text">
-
-            Don't have an account?
-
-            <a href="signup.php">Register here</a>
 
         </div>
 
     </div>
 
-</div>
-
 </body>
+
 </html>

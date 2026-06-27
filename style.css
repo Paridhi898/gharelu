@@ -1,0 +1,188 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#d9dde3;
+  padding:40px 0;
+}
+
+/* LOGIN CONTAINER */
+
+.login-container{
+  width:400px;
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* REGISTER CONTAINER */
+
+.register-container{
+  width:480px;
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* TOP SECTION */
+
+.top-section{
+  background:linear-gradient(135deg,#5a67f2,#8b5cf6);
+  color:#fff;
+  text-align:center;
+  padding:40px 20px;
+}
+
+.top-section .icon{
+  font-size:50px;
+  margin-bottom:15px;
+}
+
+.top-section h1{
+  font-size:38px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.top-section p{
+  font-size:16px;
+  opacity:0.9;
+}
+
+/* FORM SECTION */
+
+.form-section{
+  padding:35px 30px 40px;
+}
+
+.form-group{
+  margin-bottom:25px;
+}
+
+.form-group label{
+  display:block;
+  font-size:14px;
+  font-weight:bold;
+  color:#4b5563;
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+
+/* INPUT + SELECT */
+
+.form-group input,
+.form-group select{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid #d1d5db;
+  border-radius:14px;
+  outline:none;
+  font-size:16px;
+  transition:0.3s;
+  background:#fff;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+  border-color:#7c5cff;
+  box-shadow:0 0 5px rgba(124,92,255,0.4);
+}
+
+/* LOGIN BUTTON */
+
+.login-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#5a67f2,#8b5cf6);
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s;
+}
+
+.login-btn:hover{
+  opacity:0.9;
+  transform:translateY(-2px);
+}
+
+/* REGISTER BUTTON */
+
+.register-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#5a67f2,#8b5cf6);
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s;
+}
+
+.register-btn:hover{
+  opacity:0.9;
+  transform:translateY(-2px);
+}
+
+/* LOGIN PAGE REGISTER TEXT */
+
+.register-text{
+  text-align:center;
+  margin-top:20px;
+  color:#555;
+  font-size:15px;
+}
+
+.register-text a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.register-text a:hover{
+  text-decoration:underline;
+}
+
+/* REGISTER PAGE LOGIN TEXT */
+
+.login-text{
+  text-align:center;
+  margin-top:20px;
+  color:#555;
+  font-size:15px;
+}
+
+.login-text a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.login-text a:hover{
+  text-decoration:underline;
+}
+.error-message{
+  background:#ffdddd;
+  color:#d8000c;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:20px;
+  text-align:center;
+  font-weight:bold;
+}
