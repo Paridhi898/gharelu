@@ -1,61 +1,70 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/config.php';
 
-$conn = mysqli_connect("localhost", "root", "", "gharelu_db");
-
-if (!$conn) {
-    die("Connection Failed");
+if (!empty($_SESSION['user_id'])) {
+    redirect_role_home();
 }
 
-$error = "";
+$errors = [];
+$username = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $sql = "SELECT * FROM users WHERE username='$username'";
-
-    $result = mysqli_query($conn, $sql);
-
-    if (mysqli_num_rows($result) > 0) {
-
-        $user = mysqli_fetch_assoc($result);
-
-        // VERIFY PASSWORD
-
-        if (password_verify($password, $user['password'])) {
-
-            // STORE SESSION
-
-            $_SESSION['user_id'] = $user['id'];
-
-            $_SESSION['username'] = $user['username'];
-
-            $_SESSION['user_type'] = $user['user_type'];
-
-            // REDIRECT BASED ON ROLE
-
-            if ($user['user_type'] == "admin") {
-
-                header("Location: admin_dashboard.php");
-            } elseif ($user['user_type'] == "landlord") {
-
-                header("Location: owner_dashboard.php");
-            } elseif ($user['user_type'] == "tenant") {
-
-                header("Location: tenant_dashboard.php");
-            }
-
-            exit();
-        } else {
-
-            $error = "Incorrect Password";
-        }
+    if ($username === '' || $password === '') {
+        $errors[] = 'Please enter both username and password.';
     } else {
+        $conn = db_connect();
+        $stmt = mysqli_prepare($conn, 'SELECT id, username, password, user_type FROM users WHERE username = ? LIMIT 1');
+        mysqli_stmt_bind_param($stmt, 's', $username);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-        $error = "User Not Found";
+        if ($result && mysqli_num_rows($result) === 1) {
+            $user = mysqli_fetch_assoc($result);
+
+            if ($user['user_type'] === 'landlord') {
+                $verifyStmt = mysqli_prepare($conn, 'SELECT verification_status FROM landlord WHERE user_id = ? LIMIT 1');
+                if ($verifyStmt) {
+                    mysqli_stmt_bind_param($verifyStmt, 'i', $user['id']);
+                    mysqli_stmt_execute($verifyStmt);
+                    $verifyResult = mysqli_stmt_get_result($verifyStmt);
+                    $landlordRow = mysqli_fetch_assoc($verifyResult);
+                } else {
+                    $landlordRow = null;
+                }
+
+                if (!$landlordRow || $landlordRow['verification_status'] !== 'verified') {
+                    $errors[] = 'Your landlord account is pending verification. Please wait for admin approval.';
+                    mysqli_close($conn);
+                } elseif (password_verify($password, $user['password'])) {
+                    session_regenerate_id(true);
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['user_type'] = $user['user_type'];
+                    mysqli_close($conn);
+                    redirect_role_home();
+                } else {
+                    $errors[] = 'Incorrect password.';
+                    mysqli_close($conn);
+                }
+            } elseif (password_verify($password, $user['password'])) {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['user_type'] = $user['user_type'];
+                mysqli_close($conn);
+                redirect_role_home();
+            } else {
+                $errors[] = 'Incorrect password.';
+                mysqli_close($conn);
+            }
+        } else {
+            $errors[] = 'User not found.';
+        }
     }
 }
 
@@ -72,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <title>Login</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
 
 </head>
 
@@ -92,14 +101,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="form-section">
 
-            <?php
-
-            if ($error != "") {
-
-                echo "<div class='error-message'>$error</div>";
-            }
-
-            ?>
+        <?php if (!empty($errors)): ?>
+            <div class="error-message">
+                <ul>
+                    <?php foreach ($errors as $err): ?>
+                        <li><?php echo htmlspecialchars($err); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
             <form method="POST">
 
@@ -107,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <label>Username</label>
 
-                    <input type="text" name="username" required>
+                <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
 
                 </div>
 
