@@ -2,11 +2,11 @@
 
 $conn = mysqli_connect("localhost", "root", "", "gharelu_db");
 
-if(!$conn){
+if (!$conn) {
     die("Connection Failed");
 }
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $full_name = $_POST['full_name'];
     $username = $_POST['username'];
@@ -17,35 +17,63 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if($password != $confirm_password){
+    // Check password
+    if ($password != $confirm_password) {
+        echo "<script>
+                alert('Passwords do not match.');
+                window.history.back();
+              </script>";
+        exit();
+    }
 
-        echo "Passwords do not match";
+    // Check username
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+    if (mysqli_num_rows($result) > 0) {
+        echo "<script>
+                alert('Username already exists.');
+                window.history.back();
+              </script>";
+        exit();
+    }
 
-    }else{
+    // Check email
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+    if (mysqli_num_rows($result) > 0) {
+        echo "<script>
+                alert('Email already exists.');
+                window.history.back();
+              </script>";
+        exit();
+    }
 
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // Check phone number
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE phone_number='$phone_number'");
+    if (mysqli_num_rows($result) > 0) {
+        echo "<script>
+                alert('Phone number already exists.');
+                window.history.back();
+              </script>";
+        exit();
+    }
 
-        $sql = "INSERT INTO users
-        (full_name, username, email, phone_number, citizenship_id, user_type, password)
+    // Hash password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        VALUES
+    // Insert user
+    $sql = "INSERT INTO users
+            (full_name, username, email, phone_number, citizenship_id, user_type, password)
+            VALUES
+            ('$full_name', '$username', '$email', '$phone_number',
+             '$citizenship_id', '$user_type', '$hashed_password')";
 
-        ('$full_name', '$username', '$email', '$phone_number',
-        '$citizenship_id', '$user_type', '$hashed_password')";
-
-        if(mysqli_query($conn, $sql)){
-
-            header("Location: login.php");
-            exit();
-
-        }else{
-
-            echo "Registration Failed";
-        }
+    if (mysqli_query($conn, $sql)) {
+        header("Location: login.php");
+        exit();
+    } else {
+        echo "Registration Failed: " . mysqli_error($conn);
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,7 +84,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     <title>Signup</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -80,27 +108,27 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" name="full_name" required>
+                <input type="text" name="full_name" placeholder="Enter full name" required>
             </div>
 
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" required>
+                <input type="text" name="username" placeholder="Enter username" required>
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" placeholder="Enter your email" required>
             </div>
 
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" name="phone_number" required>
+                <input type="text" name="phone_number" minlength="10" maxlength="10"  placeholder="98XXXXXXXX">
             </div>
 
             <div class="form-group">
                 <label>Citizenship ID</label>
-                <input type="text" name="citizenship_id" required>
+                <input type="text" name="citizenship_id" placeholder="Eg:04-01-73-02257" minlength="9" required>
             </div>
 
             <div class="form-group">
@@ -114,19 +142,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                     <option value="landlord">Landlord</option>
 
-                    <option value="admin">Admin</option>
+                  
 
                 </select>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" required>
+                <input type="password" name="password" placeholder="Enter your password" required>
             </div>
 
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="confirm_password" required>
+                <input type="password" name="confirm_password"  placeholder="Confirm your password">
             </div>
 
             <button type="submit" class="register-btn">
