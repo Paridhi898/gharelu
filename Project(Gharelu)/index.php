@@ -212,8 +212,7 @@ if ($selected_id > 0) {
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <i class="fas fa-home"></i>
-                <span>Gharelu</span>
+                <span>🏡 Gharelu</span>
             </div>
             <div class="nav-links">
                 <a href="index.php" class="active">Home</a>

@@ -84,7 +84,7 @@ if ($houseStmt) {
 $requests = [];
 $requestStmt = mysqli_prepare(
     $conn,
-    'SELECT ir.request_id, ir.message, ir.request_status, ir.requested_at, h.title AS house_title, u.full_name AS tenant_name, u.email AS tenant_email, u.phone_number AS tenant_phone
+    'SELECT ir.request_id, ir.message, ir.request_status, ir.requested_at, h.title AS house_title, u.full_name AS tenant_name, u.phone_number AS tenant_phone
      FROM interest_request ir
      JOIN house h ON ir.house_id = h.house_id
      JOIN users u ON ir.tenant_id = u.id
@@ -120,7 +120,7 @@ mysqli_close($conn);
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="logo"><span>Rent<em>Hub</em></span></div>
+  <div class="logo"><span>🏠Gharelu</span></div>
 
   <div class="user-info">
     <div class="av"><?php echo htmlspecialchars($avatarLetter); ?></div>
@@ -292,7 +292,6 @@ mysqli_close($conn);
               <div class="req-prop"><?php echo htmlspecialchars($request['house_title']); ?></div>
               <div class="req-name"><?php echo htmlspecialchars($request['tenant_name']); ?></div>
               <div class="req-contact">
-                <a href="mailto:<?php echo htmlspecialchars($request['tenant_email']); ?>">✉️ <?php echo htmlspecialchars($request['tenant_email']); ?></a>
                 <?php if (!empty($request['tenant_phone'])): ?>
                   <a href="tel:<?php echo htmlspecialchars($request['tenant_phone']); ?>">📞 <?php echo htmlspecialchars($request['tenant_phone']); ?></a>
                 <?php endif; ?>

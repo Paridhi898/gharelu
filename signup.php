@@ -5,7 +5,6 @@ require_once __DIR__ . '/config.php';
 $errors = [];
 $full_name = '';
 $username = '';
-$email = '';
 $phone_number = '';
 $citizenship_id = '';
 $user_type = '';
@@ -13,14 +12,13 @@ $user_type = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = trim($_POST['full_name'] ?? '');
     $username = trim($_POST['username'] ?? '');
-    $email = trim($_POST['email'] ?? '');
     $phone_number = trim($_POST['phone_number'] ?? '');
     $citizenship_id = trim($_POST['citizenship_id'] ?? '');
     $user_type = trim($_POST['user_type'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
-    if ($full_name === '' || $username === '' || $email === '' || $user_type === '' || $password === '') {
+    if ($full_name === '' || $username === '' || $citizenship_id === '' || $user_type === '' || $password === '') {
         $errors[] = 'Please fill in all required fields.';
     }
 
@@ -32,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Passwords do not match.';
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Invalid email address.';
+    if (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters long.';
     }
 
     if ($phone_number !== '' && !preg_match('/^[0-9]{10}$/', $phone_number)) {
@@ -43,8 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $conn = db_connect();
 
-        $stmt = mysqli_prepare($conn, 'SELECT username, email, phone_number FROM users WHERE username = ? OR email = ? OR phone_number = ? LIMIT 1');
-        mysqli_stmt_bind_param($stmt, 'sss', $username, $email, $phone_number);
+        if ($phone_number !== '') {
+            $stmt = mysqli_prepare($conn, 'SELECT username, phone_number FROM users WHERE username = ? OR phone_number = ? LIMIT 1');
+            mysqli_stmt_bind_param($stmt, 'ss', $username, $phone_number);
+        } else {
+            $stmt = mysqli_prepare($conn, 'SELECT username FROM users WHERE username = ? LIMIT 1');
+            mysqli_stmt_bind_param($stmt, 's', $username);
+        }
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
@@ -52,9 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $existing = mysqli_fetch_assoc($result);
             if ($existing['username'] === $username) {
                 $errors[] = 'Username already exists.';
-            } elseif ($existing['email'] === $email) {
-                $errors[] = 'Email already exists.';
-            } elseif ($existing['phone_number'] === $phone_number) {
+            } elseif ($phone_number !== '' && $existing['phone_number'] === $phone_number) {
                 $errors[] = 'Phone number already exists.';
             }
         }
@@ -62,9 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($errors)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $verification_status = $user_type === 'tenant' ? 'verified' : 'pending';
-            $stmt = mysqli_prepare($conn, 'INSERT INTO users (full_name, username, email, phone_number, citizenship_id, user_type, password) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            mysqli_stmt_bind_param($stmt, 'sssssss', $full_name, $username, $email, $phone_number, $citizenship_id, $user_type, $hashed_password);
-
+            $stmt = mysqli_prepare($conn, 'INSERT INTO users (full_name, username, phone_number, citizenship_id, user_type, password, verification_status) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            mysqli_stmt_bind_param($stmt, 'sssssss', $full_name, $username, $phone_number, $citizenship_id, $user_type, $hashed_password, $verification_status);
             if (mysqli_stmt_execute($stmt)) {
                 $newUserId = mysqli_insert_id($conn);
 
@@ -117,44 +117,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
 
-    <div class="form-section">
+        <div class="form-section">
 
-        <?php if (!empty($errors)): ?>
-            <div class="error-message">
-                <ul>
-                    <?php foreach ($errors as $err): ?>
-                        <li><?php echo htmlspecialchars($err); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
+            <?php if (!empty($errors)): ?>
+                <div class="error-message">
+                    <ul>
+                        <?php foreach ($errors as $err): ?>
+                            <li><?php echo htmlspecialchars($err); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
             <form method="POST">
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="full_name" placeholder="Enter full name" value="<?php echo htmlspecialchars($full_name); ?>" required>
-            </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" placeholder="Enter full name" value="<?php echo htmlspecialchars($full_name); ?>" required>
+                </div>
 
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="Enter username" value="<?php echo htmlspecialchars($username); ?>" required>
-            </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter username" value="<?php echo htmlspecialchars($username); ?>" required>
+                </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" placeholder="Enter your email" value="<?php echo htmlspecialchars($email); ?>" required>
-            </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone_number" minlength="10" maxlength="10" placeholder="98XXXXXXXX" value="<?php echo htmlspecialchars($phone_number); ?>">
+                </div>
 
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="text" name="phone_number" minlength="10" maxlength="10" placeholder="98XXXXXXXX" value="<?php echo htmlspecialchars($phone_number); ?>">
-            </div>
-
-            <div class="form-group">
-                <label>Citizenship ID</label>
-                <input type="text" name="citizenship_id" placeholder="Eg:04-01-73-02257" minlength="9" required value="<?php echo htmlspecialchars($citizenship_id); ?>">
-            </div>
+                <div class="form-group">
+                    <label>Citizenship ID</label>
+                    <input type="text" name="citizenship_id" placeholder="Eg:04-01-73-02257" minlength="9" required value="<?php echo htmlspecialchars($citizenship_id); ?>">
+                </div>
 
                 <div class="form-group">
                     <label>User Type</label>
@@ -163,24 +158,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <option value="">Select User Type</option>
 
-                    <option value="tenant" <?php echo $user_type === 'tenant' ? 'selected' : ''; ?>>Tenant</option>
+                        <option value="tenant" <?php echo $user_type === 'tenant' ? 'selected' : ''; ?>>Tenant</option>
 
-                    <option value="landlord" <?php echo $user_type === 'landlord' ? 'selected' : ''; ?>>Landlord</option>
+                        <option value="landlord" <?php echo $user_type === 'landlord' ? 'selected' : ''; ?>>Landlord</option>
 
-                  
+
 
                     </select>
                 </div>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password (minimum 8 characters)" required minlength="8">
+                </div>
 
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password"  placeholder="Confirm your password">
-            </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" placeholder="Confirm your password" minlength="8">
+                </div>
 
                 <button type="submit" class="register-btn">
                     REGISTER

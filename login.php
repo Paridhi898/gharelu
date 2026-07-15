@@ -114,11 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <form method="POST">
 
                 <div class="form-group">
-
                     <label>Username</label>
-
-                <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
-
+                    <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
                 </div>
 
                 <div class="form-group">
