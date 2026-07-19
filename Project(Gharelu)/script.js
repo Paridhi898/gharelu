@@ -1,4 +1,4 @@
-// script.js - Main JavaScript file
+// script.js - Complete JavaScript file
 
 document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu functionality
@@ -22,17 +22,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 navLinks.style.padding = '1rem';
                 navLinks.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
                 navLinks.style.zIndex = '999';
+                navLinks.style.gap = '1rem';
+                navLinks.style.alignItems = 'center';
                 
                 if (navAuth) {
                     navAuth.style.display = 'flex';
+                    navAuth.style.flexDirection = 'column';
                     navAuth.style.position = 'absolute';
-                    navAuth.style.top = '200px';
+                    navAuth.style.top = '220px';
                     navAuth.style.left = '0';
                     navAuth.style.right = '0';
                     navAuth.style.backgroundColor = 'white';
                     navAuth.style.padding = '1rem';
-                    navAuth.style.justifyContent = 'center';
+                    navAuth.style.alignItems = 'center';
                     navAuth.style.zIndex = '999';
+                    navAuth.style.gap = '0.5rem';
                 }
             }
         });
@@ -75,18 +79,24 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
     
-    // Search form validation
-    const searchForm = document.querySelector('.search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            const rooms = document.getElementById('rooms')?.value;
-            const location = document.getElementById('location_search')?.value;
-            const maxPrice = document.getElementById('max_price')?.value;
+    // Search form validation with pagination reset
+    const searchForms = document.querySelectorAll('.search-form');
+    searchForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Remove page parameter when searching
+            const pageInput = document.createElement('input');
+            pageInput.type = 'hidden';
+            pageInput.name = 'page';
+            pageInput.value = '1';
+            this.appendChild(pageInput);
             
-            // Optional: Add custom validation logic here
-            console.log('Searching for:', { rooms, location, maxPrice });
+            const rooms = this.querySelector('#rooms')?.value;
+            const province = this.querySelector('#province_search')?.value;
+            const maxPrice = this.querySelector('#max_price')?.value;
+            
+            console.log('Searching for:', { rooms, province, maxPrice });
         });
-    }
+    });
     
     // Property card hover effect enhancement
     const propertyCards = document.querySelectorAll('.property-card');
@@ -99,22 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
-    
-    // Sign In and Sign Up button handlers
-    const signInBtn = document.getElementById('signInBtn');
-    const signUpBtn = document.getElementById('signUpBtn');
-    
-    if (signInBtn) {
-        signInBtn.addEventListener('click', function() {
-            alert('Sign In functionality will be implemented soon!');
-        });
-    }
-    
-    if (signUpBtn) {
-        signUpBtn.addEventListener('click', function() {
-            alert('Sign Up functionality will be implemented soon!');
-        });
-    }
     
     // Add loading state for images
     const images = document.querySelectorAll('.property-image img');
@@ -131,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Price formatting helper (if needed for dynamic content)
+    // Price formatting helper
     function formatPrice(price) {
         return new Intl.NumberFormat('en-NP', {
             style: 'currency',
@@ -141,29 +135,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }).format(price);
     }
     
-    // Optional: Add search suggestions
-    const locationSearch = document.getElementById('location_search');
-    if (locationSearch) {
-        locationSearch.addEventListener('change', function() {
-            // Could implement dynamic filtering here
-            console.log('Location changed to:', this.value);
-        });
-    }
-    
     // Handle window resize for mobile menu
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
-            if (navLinks) navLinks.style.display = '';
-            if (navAuth) navAuth.style.display = '';
-            if (navLinks) navLinks.style.flexDirection = '';
-            if (navLinks) navLinks.style.position = '';
-            if (navLinks) navLinks.style.backgroundColor = '';
-            if (navLinks) navLinks.style.padding = '';
-            if (navLinks) navLinks.style.boxShadow = '';
-            if (navLinks) navLinks.style.zIndex = '';
-        } else {
-            if (navLinks && navLinks.style.display === 'flex') {
-                // Keep mobile menu state if open
+            if (navLinks) {
+                navLinks.style.display = '';
+                navLinks.style.flexDirection = '';
+                navLinks.style.position = '';
+                navLinks.style.backgroundColor = '';
+                navLinks.style.padding = '';
+                navLinks.style.boxShadow = '';
+                navLinks.style.zIndex = '';
+                navLinks.style.gap = '';
+                navLinks.style.alignItems = '';
+            }
+            if (navAuth) {
+                navAuth.style.display = '';
+                navAuth.style.flexDirection = '';
+                navAuth.style.position = '';
+                navAuth.style.backgroundColor = '';
+                navAuth.style.padding = '';
+                navAuth.style.alignItems = '';
+                navAuth.style.zIndex = '';
+                navAuth.style.gap = '';
             }
         }
     });
@@ -179,4 +173,41 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    
+    // Pagination - Preserve scroll position when changing pages
+    document.querySelectorAll('.page-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href) {
+                // Store current scroll position
+                sessionStorage.setItem('scrollPosition', window.scrollY);
+                window.location.href = href;
+            }
+        });
+    });
+    
+    // Restore scroll position after page load
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition));
+        sessionStorage.removeItem('scrollPosition');
+    }
+    
+    // Sort dropdown - auto-submit on change
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const form = this.closest('form') || this.parentElement.querySelector('form');
+            if (form) {
+                form.submit();
+            } else {
+                // If no form, build URL and redirect
+                const url = new URL(window.location.href);
+                url.searchParams.set('sort', this.value);
+                url.searchParams.set('page', '1');
+                window.location.href = url.toString();
+            }
+        });
+    }
 });
