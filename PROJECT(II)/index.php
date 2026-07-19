@@ -325,7 +325,7 @@ include 'header.php';
                         <li><a href="#">Browse Listings</a></li>
                         <li><a href="#">How It Works</a></li>
                         <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Trust & Safety</a></li>
+                        <li><a href="#">Safety</a></li>
                     </ul>
                 </div>
                 <div class="footer-links">
@@ -355,5 +355,5 @@ include 'header.php';
     <script src="script.js"></script>
 </body>
 </html>
-
+ 
 <?php include 'footer.php'; ?>
