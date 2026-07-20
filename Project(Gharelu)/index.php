@@ -371,7 +371,7 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="index.php?section=home" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:0.5rem;">
+<a href="index.php?section=home" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:0.5rem;">
                     <i class="fas fa-home"></i>
                     <span>Gharelu</span>
                 </a>
@@ -383,8 +383,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                 <a href="index.php?section=contact" class="<?php echo $section === 'contact' ? 'active' : ''; ?>">Contact</a>
             </div>
             <div class="nav-auth">
-                <a href="signin.html" class="btn-outline">Sign In</a>
-                <a href="signup.html" class="btn-primary">Sign Up</a>
+               <a href="../login.php" class="btn-outline">Sign In</a>
+                <a href="../signup.php" class="btn-primary">Sign Up</a>
             </div>
             <div class="mobile-menu">
                 <i class="fas fa-bars"></i>

@@ -5,7 +5,6 @@ require_role('tenant');
 
 $user = current_user();
 $fullName = $user['full_name'] ?? $_SESSION['username'];
-$email = $user['email'] ?? '';
 $tenantId = intval($_SESSION['user_id']);
 
 $conn = db_connect();
@@ -198,7 +197,6 @@ mysqli_close($conn);
       <div class="sh"><h3>Profile</h3></div>
       <div class="panel">
         <p><strong>Name:</strong> <?php echo htmlspecialchars($fullName); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
         <p><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?></p>
         <p><strong>Role:</strong> Tenant</p>
       </div>

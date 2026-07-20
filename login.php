@@ -87,19 +87,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
 
-<div class="login-container">
+    <div class="login-container">
 
-    <div class="top-section">
+        <div class="top-section">
 
-        <div class="icon">🏠</div>
+            <div class="icon">🏠</div>
 
-        <h1>Welcome Back</h1>
+            <h1>Welcome Back</h1>
 
-        <p>Login to your Gharelu account</p>
+            <p>Login to your Gharelu account</p>
 
-    </div>
+        </div>
 
-    <div class="form-section">
+        <div class="form-section">
 
         <?php if (!empty($errors)): ?>
             <div class="error-message">
@@ -111,41 +111,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         <?php endif; ?>
 
-        <form method="POST">
+            <form method="POST">
 
-            <div class="form-group">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+                </div>
 
-                <label>Username</label>
+                <div class="form-group">
 
-                <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+                    <label>Password</label>
+
+                    <input type="password" name="password" required>
+
+                </div>
+
+                <button type="submit" class="login-btn">
+                    LOGIN
+                </button>
+
+            </form>
+
+            <div class="register-text">
+
+                Don't have an account?
+
+                <a href="signup.php">Register here</a>
 
             </div>
-
-            <div class="form-group">
-
-                <label>Password</label>
-
-                <input type="password" name="password" required>
-
-            </div>
-
-            <button type="submit" class="login-btn">
-                LOGIN
-            </button>
-
-        </form>
-
-        <div class="register-text">
-
-            Don't have an account?
-
-            <a href="signup.php">Register here</a>
 
         </div>
 
     </div>
 
-</div>
-
 </body>
+
 </html>
