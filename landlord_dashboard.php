@@ -143,7 +143,7 @@ mysqli_close($conn);
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="logo"><span>Rent<em>Hub</em></span></div>
+  <div class="logo"><span>Ghare<em>lu</em></span></div>
 
   <div class="user-info">
     <div class="av"><?php echo htmlspecialchars($avatarLetter); ?></div>

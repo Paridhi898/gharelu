@@ -222,8 +222,8 @@ if ($selected_id > 0) {
                 <a href="#">Contact</a>
             </div>
             <div class="nav-auth">
-                <button class="btn-outline" id="signInBtn">Sign In</button>
-                <button class="btn-primary" id="signUpBtn">Sign Up</button>
+                <button class="btn-outline" id="signInBtn" onclick="window.location.href='../login.php'">Sign In</button>
+                <button class="btn-primary" id="signUpBtn" onclick="window.location.href='../signup.php'">Sign Up</button>
             </div>
             <div class="mobile-menu">
                 <i class="fas fa-bars"></i>
