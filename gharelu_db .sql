@@ -72,6 +72,21 @@ ALTER TABLE `users`
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
+CREATE TABLE IF NOT EXISTS `landlord` (
+  `landlord_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `citizenship_no` varchar(255) DEFAULT NULL,
+  `land_ownership_certificate_no` varchar(30) DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `citizenship_image` varchar(255) DEFAULT NULL,
+  `verified_at` timestamp NULL DEFAULT NULL,
+  `verification_status` enum('pending','verified','rejected') NOT NULL DEFAULT 'pending',
+  PRIMARY KEY (`landlord_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  KEY `idx_landlord_user` (`user_id`),
+  CONSTRAINT `fk_landlord_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `house` (
   `house_id` int(11) NOT NULL AUTO_INCREMENT,
   `landlord_id` int(11) NOT NULL,

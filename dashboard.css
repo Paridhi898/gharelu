@@ -99,8 +99,8 @@ nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4
 
 /* BUTTONS */
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all .18s; }
-.btn-primary { background: var(--accent); color: var(--white); }
-.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary { background: #5c8fc6; color: var(--white); }
+.btn-primary:hover { background: #4b7aad; }
 .btn-danger  { background: rgba(245,101,101,.12); color: var(--red); border: 1px solid rgba(245,101,101,.25); }
 .btn-danger:hover { background: rgba(245,101,101,.22); }
 .btn-success { background: rgba(62,207,142,.12); color: var(--green); border: 1px solid rgba(62,207,142,.25); }
