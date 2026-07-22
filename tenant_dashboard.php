@@ -6,6 +6,7 @@
    requests to landlords, and writing/deleting reviews.
 
 =================================================================== */
+require_once 'config.php';
 require_role('tenant');
 
 $user = current_user();
@@ -13,7 +14,7 @@ $fullName = $user['full_name'] ?? $_SESSION['username'];
 $email = $user['email'] ?? '';
 $tenantId = intval($_SESSION['user_id']);
 
-require_once 'config.php';
+
 $conn = db_connect();
 
 /* ---------------------- AUTH CHECK ---------------------- */
