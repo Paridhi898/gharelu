@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Manrope:wght@400;500;600&display=swap');
+
 :root {
   --primary-color: #2c5f8a;
   --primary-dark: #1e3d59;
@@ -25,8 +27,11 @@
   --shadow-md: 0 4px 6px rgba(0,0,0,.1);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; font-size: 14px; display: flex; min-height: 100vh; }
+body { background: var(--bg); color: var(--text); font-family: 'Manrope', Arial, Helvetica, sans-serif; font-size: 14px; display: flex; min-height: 100vh; }
 a { text-decoration: none; color: inherit; }
+
+/* Keep dashboard layout intact */
+body > .main { width: 100%; }
 
 /* SIDEBAR */
 .sidebar {
@@ -36,8 +41,21 @@ a { text-decoration: none; color: inherit; }
   padding: 24px 0; position: fixed; top: 0; left: 0;
 }
 .logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); }
-.logo span { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+.logo span { font-family: 'Syne', Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 800; }
+
+/* Hide the textual brand in the top-left (RentHub) for dashboard views */
+.sidebar .logo, .sidebar .logo span, .sidebar .logo em { display: none !important; }
+
+/* Ensure numeric and price fonts match site body (Manrope) */
+.prop-price, .stat-num, .prop-price small, .prop-footer select, .prop-meta { font-family: 'Manrope', Arial, Helvetica, sans-serif !important; }
+
+/* Improve contrast of the active sidebar link */
+.nav-link.active { background: #5c8fc6; color: #ffffff; }
+.nav-link.active .n-badge { background: rgba(255,255,255,0.18); color: #ffffff; }
 .logo em { color: var(--accent); font-style: normal; }
+
+/* Ensure dropdowns and form controls inherit the dashboard theme */
+select, input, textarea { font-family: 'Manrope', Arial, Helvetica, sans-serif; }
 
 .user-info { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
 .av { width: 36px; height: 36px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: var(--white); flex-shrink: 0; }
@@ -181,6 +199,21 @@ nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4
 .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .fbtn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .18s; }
 .fbtn:hover, .fbtn.active { border-color: var(--accent); background: rgba(232,177,44,.1); color: var(--accent); }
+
+/* Responsive dashboard layout */
+@media (max-width: 980px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .sidebar { width: 100%; min-height: auto; position: relative; }
+  .main { margin-left: 0; }
+  .topbar { padding: 14px 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .content { padding: 16px; }
+  .stats { grid-template-columns: 1fr; }
+}
 
 /* Admin verification table */
 .verification-body table { width: 100%; border-collapse: collapse; margin-top: 8px; }

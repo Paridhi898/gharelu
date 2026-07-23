@@ -23,6 +23,15 @@ function require_login() {
 
 function redirect_role_home() {
     $role = $_SESSION['user_type'] ?? '';
+
+    if ($role === '') {
+        $user = current_user();
+        $role = $user['user_type'] ?? '';
+        if ($role !== '') {
+            $_SESSION['user_type'] = $role;
+        }
+    }
+
     if ($role === 'admin') {
         header('Location: admin_dashboard.php');
     } elseif ($role === 'landlord') {
@@ -37,7 +46,15 @@ function redirect_role_home() {
 
 function require_role($expectedRole) {
     require_login();
-    if ($_SESSION['user_type'] !== $expectedRole) {
+
+    $currentUser = current_user();
+    $actualRole = $currentUser['user_type'] ?? ($_SESSION['user_type'] ?? '');
+
+    if ($actualRole !== '') {
+        $_SESSION['user_type'] = $actualRole;
+    }
+
+    if ($actualRole !== $expectedRole) {
         redirect_role_home();
     }
 }

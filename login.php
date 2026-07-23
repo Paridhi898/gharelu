@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/config.php';
 
-if (!empty($_SESSION['user_id'])) {
+if (!empty($_SESSION['user_id']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_role_home();
 }
 
@@ -10,6 +10,9 @@ $errors = [];
 $username = '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    session_regenerate_id(true);
+    $_SESSION = [];
 
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
